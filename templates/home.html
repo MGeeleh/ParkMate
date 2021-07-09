@@ -1,0 +1,97 @@
+<!doctype html>
+<html xmlns="http://www.w3.org/1999/html">
+<head>
+  <title>User Page</title>
+  <script src="{{ url_for('static', filename='script.js') }}"></script>
+  <link type="text/css" rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+  <script>
+
+    function initMap() {
+      var bay = {{bays| tojson}};
+      var map = new google.maps.Map(document.getElementById("map"), {
+        center: {
+          lat: -37.8136,
+          lng: 144.9631
+        },
+        zoom: 14,
+        mapTypeId: google.maps.MapTypeId.ROADMAP
+      });
+      var infowindow = new google.maps.InfoWindow();
+
+      var marker, i;
+      var numOfBays = "{{numOfBays}}";
+      for (i = 0; i < numOfBays; i++) {
+        marker = new google.maps.Marker({
+          position: new google.maps.LatLng(bay[i][1], bay[i][2]),
+          map: map,
+          url: "{{url_for('bayp')}}"+ "?" + "bayid=" + bay[i][0]+ "&" + "baylat=" + bay[i][1]+ "&" + "baylon=" + bay[i][2]
+        });
+
+        google.maps.event.addListener(marker, 'click', (function (marker, i) {
+          return function () {
+            window.location.href = marker.url;
+          }
+        })(marker, i));
+        google.maps.event.addListener(marker, 'mouseover', (function (marker, i) {
+          return function () {
+            infowindow.setContent("BAY ID: " + bay[i][0]);
+            infowindow.open(map, marker);
+          }
+        })(marker, i));
+        google.maps.event.addListener(marker, 'mouseout', (function (marker, i) {
+          return function () {
+            infowindow.close(marker);
+          }
+        })(marker, i));
+
+
+      }
+    }
+    initMap()
+  </script>
+    <script async defer src="https://maps.googleapis.com/maps/api/js?key=MAPSAPIHERE&callback=initMap"> </script>
+
+  <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='style1.css') }}">
+
+    <!-- Bootstrap CSS -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-eOJMYsd53ii+scO/bJGFsiCZc+5NDVN2yr8+0RDqr0Ql0h+rP48ckxlpbzKgwra6" crossorigin="anonymous">
+
+
+</head>
+<!--<body>-->
+<body class="bg-nav">
+
+        <div class="row justify-content-center align-items-center">
+            <div class="container" style="padding-top: 10px;">
+<!--              <nav class="navbar navbar-default">-->
+<!--                  <div class="container-fluid">-->
+<!--                    <div class="navbar-header">-->
+                        <img src="{{ img_url }}" width="30" height="30" alt="No profile photo">
+                        <p style="color:white;">Hello {{first_name}}, the weather is <b>{{weather_desc}}</b> with a temp of <b>{{weather}} <span>&#176;</span>C </b></p>
+                        <a style="color:white;" href="{{ url_for('logout')}}">Logout?</a>
+<!--                    </div>-->
+<!--                  </div>-->
+<!--              </nav>-->
+            </div>
+        </div>
+<!--    </div>-->
+<!--      <div class="container">-->
+
+        <div class="row justify-content-center align-items-center" style="padding-top: 10px;">
+            <div class="col-md-12" style="margin-top:40px">
+                <p style="color:white; font-size:30px;"> Select a car parking spot on the map to see live availability!</p>
+
+                <center><div id="map"></div></center>
+            </div>
+
+        </div>
+
+    </div>
+
+
+
+
+
+
+</body>
+</html>
